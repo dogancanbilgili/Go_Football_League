@@ -104,7 +104,7 @@ Returns the current league standings sorted by points → goal difference → go
 [
   {
     "id": 7, "name": "Manchester City",
-    "attack": 88, "midfield": 86, "defence": 84, "overall": 87,
+    "attack": 88, "midfield": 86, "defence": 84,
     "played": 5, "won": 4, "drawn": 0, "lost": 1,
     "goals_for": 12, "goals_against": 4, "goal_difference": 8, "points": 12
   }
@@ -217,7 +217,7 @@ Expected points per fixture uses the team's attack + midfield rating relative to
 
 ### Team ratings
 
-20 Premier League teams with real **EA FC 26** ratings sourced from [sofifa.com](https://sofifa.com). Four attributes per team: Attack, Midfield, Defence, Overall.
+20 Premier League teams with real **EA FC 26** ratings sourced from [sofifa.com](https://sofifa.com). Three attributes per team: Attack, Midfield, Defence. Attack and Defence drive match simulation; Midfield drives championship predictions.
 
 ---
 
@@ -229,8 +229,7 @@ CREATE TABLE teams (
     name     VARCHAR(100) NOT NULL UNIQUE,
     attack   INT NOT NULL,
     midfield INT NOT NULL,
-    defence  INT NOT NULL,
-    overall  INT NOT NULL
+    defence  INT NOT NULL
 );
 
 CREATE TABLE matches (

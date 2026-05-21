@@ -1,16 +1,14 @@
 -- =============================================================
 -- TABLE: teams
--- EA FC ratings (sofifa.com) provide Attack, Midfield, Defence, Overall.
--- These four attributes replace the single 'strength' value and allow
--- the simulation to model attack vs defence matchups realistically.
+-- EA FC 26 ratings (sofifa.com): Attack, Midfield, Defence.
+-- Attack and Defence drive match simulation; Midfield drives predictions.
 -- =============================================================
 CREATE TABLE IF NOT EXISTS teams (
     id       SERIAL       PRIMARY KEY,
     name     VARCHAR(100) NOT NULL UNIQUE,
     attack   INT          NOT NULL CHECK (attack   BETWEEN 1 AND 99),
     midfield INT          NOT NULL CHECK (midfield BETWEEN 1 AND 99),
-    defence  INT          NOT NULL CHECK (defence  BETWEEN 1 AND 99),
-    overall  INT          NOT NULL CHECK (overall  BETWEEN 1 AND 99)
+    defence  INT          NOT NULL CHECK (defence  BETWEEN 1 AND 99)
 );
 
 -- =============================================================
@@ -35,24 +33,24 @@ CREATE TABLE IF NOT EXISTS matches (
 -- SEED: 20 Premier League teams — EA FC 26 ratings from sofifa.com
 -- Order of insertion determines IDs (1-20) used by the fixture seeder.
 -- =============================================================
-INSERT INTO teams (name, attack, midfield, defence, overall) VALUES
-    ('Arsenal',                      84, 85, 85, 84),
-    ('Liverpool',                    86, 85, 84, 84),
-    ('Manchester City',              85, 85, 82, 84),
-    ('Aston Villa',                  82, 80, 80, 81),
-    ('Chelsea',                      79, 83, 80, 81),
-    ('Newcastle United',             80, 81, 80, 81),
-    ('Manchester United',            82, 82, 79, 80),
-    ('Tottenham Hotspur',            79, 79, 80, 80),
-    ('Nottingham Forest',            77, 78, 80, 79),
-    ('Crystal Palace',               79, 78, 78, 79),
-    ('Everton',                      76, 78, 77, 78),
-    ('Fulham',                       78, 78, 78, 78),
-    ('Brighton & Hove Albion',       80, 79, 78, 78),
-    ('Brentford',                    81, 78, 77, 78),
-    ('AFC Bournemouth',              80, 78, 77, 78),
-    ('West Ham United',              76, 78, 77, 77),
-    ('Sunderland',                   76, 78, 78, 77),
-    ('Leeds United',                 76, 77, 76, 76),
-    ('Wolverhampton Wanderers',      76, 77, 75, 76),
-    ('Burnley',                      75, 76, 75, 75);
+INSERT INTO teams (name, attack, midfield, defence) VALUES
+    ('Arsenal',                      84, 85, 85),
+    ('Liverpool',                    86, 85, 84),
+    ('Manchester City',              85, 85, 82),
+    ('Aston Villa',                  82, 80, 80),
+    ('Chelsea',                      79, 83, 80),
+    ('Newcastle United',             80, 81, 80),
+    ('Manchester United',            82, 82, 79),
+    ('Tottenham Hotspur',            79, 79, 80),
+    ('Nottingham Forest',            77, 78, 80),
+    ('Crystal Palace',               79, 78, 78),
+    ('Everton',                      76, 78, 77),
+    ('Fulham',                       78, 78, 78),
+    ('Brighton & Hove Albion',       80, 79, 78),
+    ('Brentford',                    81, 78, 77),
+    ('AFC Bournemouth',              80, 78, 77),
+    ('West Ham United',              76, 78, 77),
+    ('Sunderland',                   76, 78, 78),
+    ('Leeds United',                 76, 77, 76),
+    ('Wolverhampton Wanderers',      76, 77, 75),
+    ('Burnley',                      75, 76, 75);
