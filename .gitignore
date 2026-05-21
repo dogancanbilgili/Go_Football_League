@@ -32,3 +32,6 @@ go.work.sum
 # .vscode/
 # PDF files
 *.pdf
+
+# Interview prep (personal notes, not part of the project)
+interview_prep.tex

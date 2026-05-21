@@ -14,4 +14,5 @@ type MatchRepository interface {
 	GetCurrentWeek() (int, error)
 	UpdateMatch(id, homeGoals, awayGoals int) error
 	SaveSimulatedMatches(matches []Match) error
+	ResetMatches() error
 }

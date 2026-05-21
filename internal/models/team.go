@@ -1,9 +1,12 @@
 package models
 
 // Team represents a football club in the league.
-// Strength (1-100) biases match simulation: a stronger team scores more and concedes less.
+// Attack, Midfield, Defence, and Overall come from EA FC ratings (sofifa.com).
 type Team struct {
 	ID       int    `db:"id"       json:"id"`
 	Name     string `db:"name"     json:"name"`
-	Strength int    `db:"strength" json:"strength"`
+	Attack   int    `db:"attack"   json:"attack"`
+	Midfield int    `db:"midfield" json:"midfield"`
+	Defence  int    `db:"defence"  json:"defence"`
+	Overall  int    `db:"overall"  json:"overall"`
 }
