@@ -2,9 +2,7 @@
 
 A football league simulation REST API built with **Go**, **Gin**, and **PostgreSQL**.
 
-Simulates a full 20-team Premier League season (38 weeks, 380 fixtures) using real EA FC 26 team ratings. Match scores are generated with a Poisson model calibrated to real Premier League goal averages. Championship probabilities are calculated from week 4 onward.
-
-Built as an [Insider](https://useinsider.com/) Development Intern hiring-day assignment.
+Simulates a full 20-team Premier League season (38 weeks, 380 fixtures) using real EA FC 26 team ratings (Attack, Defense, Midfield). Match scores are generated based on a  Poisson model to adapt real Premier League goal averages. Championship probabilities are calculated from week 4.
 
 ---
 
