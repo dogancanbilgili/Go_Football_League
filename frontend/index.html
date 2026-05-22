@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Football League Simulation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      color: #222;
+    }
+
+    header {
+      background: #1a5c2a;
+      color: white;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 { font-size: 1.4rem; }
+
+    #week-badge {
+      background: #fff;
+      color: #1a5c2a;
+      font-weight: bold;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    section h2 {
+      background: #1a5c2a;
+      color: white;
+      padding: 12px 18px;
+      font-size: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead tr { background: #e8f5e9; }
+
+    th, td {
+      padding: 9px 10px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    td:nth-child(2) { text-align: left; }
+    th:nth-child(2) { text-align: left; }
+
+    tbody tr:hover { background: #f9fffe; }
+
+    .pos { font-weight: bold; color: #1a5c2a; }
+
+    .match-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+    }
+
+    .match-item:last-child { border-bottom: none; }
+
+    .team-name { width: 38%; }
+    .team-name.home { text-align: right; }
+    .team-name.away { text-align: left; }
+
+    .score {
+      width: 20%;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #1a5c2a;
+    }
+
+    .score.pending { color: #aaa; font-weight: normal; font-size: 0.85rem; }
+
+    #predictions-section {
+      grid-column: 1 / -1;
+    }
+
+    .pred-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 18px;
+      border-bottom: 1px solid #eee;
+      gap: 12px;
+    }
+
+    .pred-item:last-child { border-bottom: none; }
+
+    .pred-name { width: 200px; font-size: 0.9rem; }
+
+    .pred-bar-wrap {
+      flex: 1;
+      background: #e8f5e9;
+      border-radius: 4px;
+      height: 18px;
+      overflow: hidden;
+    }
+
+    .pred-bar {
+      height: 100%;
+      background: #1a5c2a;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .pred-pct {
+      width: 55px;
+      text-align: right;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #1a5c2a;
+    }
+
+    #controls {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn-primary { background: #1a5c2a; color: white; }
+    .btn-primary:hover { background: #14471f; }
+
+    .btn-secondary { background: #e8f5e9; color: #1a5c2a; border: 1px solid #1a5c2a; }
+    .btn-secondary:hover { background: #d0ebd8; }
+
+    .btn-danger { background: #fff; color: #c0392b; border: 1px solid #c0392b; }
+    .btn-danger:hover { background: #fdecea; }
+
+    #status {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #888;
+      min-height: 20px;
+    }
+
+    #week-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-bottom: 1px solid #eee;
+      font-size: 0.9rem;
+    }
+
+    #week-nav button {
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      font-weight: normal;
+    }
+
+    #week-nav span { font-weight: bold; color: #1a5c2a; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Football League Simulation</h1>
+  <div id="week-badge">Week —</div>
+</header>
+
+<main>
+
+  <div id="controls">
+    <button class="btn-primary" onclick="nextWeek()">Next Week</button>
+    <button class="btn-secondary" onclick="playAll()">Play All</button>
+    <button class="btn-danger" onclick="resetLeague()">Reset</button>
+  </div>
+
+  <div id="status"></div>
+
+  <!-- League Table -->
+  <section>
+    <h2>League Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th>P</th>
+          <th>W</th>
+          <th>D</th>
+          <th>L</th>
+          <th>GF</th>
+          <th>GA</th>
+          <th>GD</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </section>
+
+  <!-- Week Matches -->
+  <section>
+    <h2>Match Results</h2>
+    <div id="week-nav">
+      <button class="btn-secondary" onclick="changeWeek(-1)">&#8592;</button>
+      <span id="viewing-week">Week 1</span>
+      <button class="btn-secondary" onclick="changeWeek(1)">&#8594;</button>
+    </div>
+    <div id="matches-list"></div>
+  </section>
+
+  <!-- Championship Predictions -->
+  <section id="predictions-section">
+    <h2>Championship Predictions</h2>
+    <div id="predictions-list"></div>
+  </section>
+
+</main>
+
+<script>
+  const API = 'https://gofootballleague-production.up.railway.app';
+  let viewingWeek = 1;
+  let currentWeek = 1;
+
+  // ── Fetch and render the league table ──────────────────────────────────────
+  async function fetchTable() {
+    const res = await fetch(`${API}/league/table`);
+    const data = await res.json();
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = data.map((team, i) => `
+      <tr>
+        <td class="pos">${i + 1}</td>
+        <td>${team.name}</td>
+        <td>${team.played}</td>
+        <td>${team.won}</td>
+        <td>${team.drawn}</td>
+        <td>${team.lost}</td>
+        <td>${team.goals_for}</td>
+        <td>${team.goals_against}</td>
+        <td>${team.goal_difference}</td>
+        <td><strong>${team.points}</strong></td>
+      </tr>
+    `).join('');
+  }
+
+  // ── Fetch and render matches for a given week ───────────────────────────────
+  async function fetchWeek(week) {
+    const res = await fetch(`${API}/league/week/${week}`);
+    const data = await res.json();
+    document.getElementById('viewing-week').textContent = `Week ${week}`;
+    const list = document.getElementById('matches-list');
+    list.innerHTML = data.map(m => {
+      const home = m.home_team?.name ?? '—';
+      const away = m.away_team?.name ?? '—';
+      const score = m.played
+        ? `${m.home_goals} - ${m.away_goals}`
+        : 'vs';
+      const scoreClass = m.played ? 'score' : 'score pending';
+      return `
+        <div class="match-item">
+          <span class="team-name home">${home}</span>
+          <span class="${scoreClass}">${score}</span>
+          <span class="team-name away">${away}</span>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Fetch and render championship predictions ───────────────────────────────
+  async function fetchPredictions() {
+    const res = await fetch(`${API}/league/predictions`);
+    const list = document.getElementById('predictions-list');
+    if (!res.ok) {
+      list.innerHTML = `<div style="padding:16px;color:#888;font-size:0.9rem;">Available from week 4 onward.</div>`;
+      return;
+    }
+    const data = await res.json();
+    list.innerHTML = data.map(p => `
+      <div class="pred-item">
+        <span class="pred-name">${p.team.name}</span>
+        <div class="pred-bar-wrap">
+          <div class="pred-bar" style="width:${p.percentage}%"></div>
+        </div>
+        <span class="pred-pct">${p.percentage}%</span>
+      </div>
+    `).join('');
+  }
+
+  // ── Fetch current week number from the API ──────────────────────────────────
+  async function fetchCurrentWeek() {
+    const res = await fetch(`${API}/league/table`);
+    const data = await res.json();
+    const played = data[0]?.played ?? 0;
+    currentWeek = Math.max(1, played > 0 ? Math.ceil(played / (20 / 10)) : 1);
+    document.getElementById('week-badge').textContent =
+      played === 0 ? 'Not started' : `Week ${currentWeek} completed`;
+  }
+
+  // ── Refresh everything ──────────────────────────────────────────────────────
+  async function refresh() {
+    await Promise.all([
+      fetchTable(),
+      fetchWeek(viewingWeek),
+      fetchPredictions(),
+      fetchCurrentWeek(),
+    ]);
+  }
+
+  // ── Button actions ──────────────────────────────────────────────────────────
+  async function nextWeek() {
+    setStatus('Simulating next week...');
+    const res = await fetch(`${API}/league/next-week`, { method: 'POST' });
+    if (!res.ok) {
+      const err = await res.json();
+      setStatus(err.error);
+      return;
+    }
+    const matches = await res.json();
+    viewingWeek = matches[0]?.week ?? viewingWeek;
+    await refresh();
+    setStatus('');
+  }
+
+  async function playAll() {
+    setStatus('Simulating all remaining weeks...');
+    const res = await fetch(`${API}/league/play-all`, { method: 'POST' });
+    if (!res.ok) {
+      const err = await res.json();
+      setStatus(err.error);
+      return;
+    }
+    const data = await res.json();
+    const weeks = Object.keys(data).map(Number);
+    if (weeks.length > 0) viewingWeek = Math.max(...weeks);
+    await refresh();
+    setStatus('');
+  }
+
+  async function resetLeague() {
+    if (!confirm('Reset the league? All results will be cleared.')) return;
+    setStatus('Resetting...');
+    await fetch(`${API}/league/reset`, { method: 'POST' });
+    viewingWeek = 1;
+    await refresh();
+    setStatus('');
+  }
+
+  function changeWeek(delta) {
+    const next = viewingWeek + delta;
+    if (next < 1 || next > 38) return;
+    viewingWeek = next;
+    fetchWeek(viewingWeek);
+  }
+
+  function setStatus(msg) {
+    document.getElementById('status').textContent = msg;
+  }
+
+  // ── Boot ────────────────────────────────────────────────────────────────────
+  refresh();
+</script>
+
+</body>
+</html>
