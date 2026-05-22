@@ -32,6 +32,18 @@ func main() {
 	// Step 4: register routes
 	router := gin.Default()
 
+	// Allow browsers to call the API from any origin (required for the frontend)
+	router.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Content-Type")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
+
 	league := router.Group("/league")
 	{
 		league.GET("/table", h.GetTable)
