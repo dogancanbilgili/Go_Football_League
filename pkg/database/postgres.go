@@ -12,9 +12,8 @@ import (
 // Connect loads .env, builds the connection string, and returns an open DB handle.
 // The caller is responsible for closing the DB when the application shuts down.
 func Connect() (*sqlx.DB, error) {
-	if err := godotenv.Load(); err != nil { 
-		return nil, fmt.Errorf("could not load .env file: %w", err)
-	}
+	// Load .env if present (local dev). In production, env vars are injected directly.
+	godotenv.Load()
 	//read the .env file and build the connection string dsn = "Data Source Name"
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
