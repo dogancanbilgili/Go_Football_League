@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-A football league simulation REST API (no frontend). Four teams play a full round-robin season (each pair plays home and away = 6 weeks, 2 matches per week). The API exposes endpoints consumable via Postman. The task is from an Insider internship hiring challenge.
+A 20-team Premier League simulation REST API with a vanilla JS frontend. Teams play a full round-robin season (home and away = 38 weeks, 10 matches per week, 380 total fixtures). Match scores are generated with a Poisson model using real EA FC 26 ratings (Attack, Midfield, Defence). Championship probabilities are calculated from week 4 onward.
 
 ## Commands
 
@@ -47,13 +47,13 @@ type leagueService struct { repo models.LeagueRepository }
 
 ## Domain Rules
 
-**League:** 4 teams (e.g. Chelsea, Arsenal, Manchester City, Liverpool), each with a `strength` attribute (1–100) that biases match simulation. Teams play each other home and away → 6 weeks total, 2 fixtures per week.
+**League:** 20 Premier League teams, each with three EA FC 26 attributes: `attack`, `midfield`, `defence` (range 72–88). Teams play each other home and away → 38 weeks total, 10 fixtures per week.
 
 **Scoring (Premier League rules):** Win = 3 pts, Draw = 1 pt, Loss = 0 pts. Table sorted by: points → goal difference → goals for → alphabetical.
 
 **Championship prediction:** shown starting from week 4 onward. Each team's probability is proportional to its current points + remaining strength-weighted expected points.
 
-**Match simulation:** goals scored per team modelled from team strength (e.g. Poisson distribution with λ derived from attacker strength vs. opponent defender strength).
+**Match simulation:** goals per team drawn from a Poisson distribution. Lambda is derived from a blended attack/midfield strength (70/30 weight) divided by opponent defence, with both sides normalized from the raw 72–88 scale to 50–100 before the ratio is computed. Home advantage modelled via higher lambda multiplier (1.4 home vs 1.15 away).
 
 ## Key API Endpoints
 

@@ -38,13 +38,22 @@ func poissonGoals(lambda float64) int {
 	return k - 1 //number of goals
 }
 
+// normalizeRating maps a raw EA FC rating (72–88) to a wider 50–100 scale
+// so that the gap between strong and weak teams has a meaningful effect on lambda.
+func normalizeRating(r int) float64 {
+	const minR, maxR = 72.0, 88.0
+	return 50.0 + (float64(r)-minR)/(maxR-minR)*50.0
+}
+
 // simulateMatch generates a scoreline using attack vs defence matchup.
 // Home team gets a small advantage via higher lambda multiplier.
 func simulateMatch(home, away models.Team) (homeGoals, awayGoals int) {
-	homeStr := float64(home.Attack)*0.7 + float64(home.Midfield)*0.3
-	awayStr := float64(away.Attack)*0.7 + float64(away.Midfield)*0.3
-	ratioHome := homeStr / float64(away.Defence)
-	ratioAway := awayStr / float64(home.Defence)
+	homeStr := normalizeRating(home.Attack)*0.7 + normalizeRating(home.Midfield)*0.3
+	awayStr := normalizeRating(away.Attack)*0.7 + normalizeRating(away.Midfield)*0.3
+	homeDef := normalizeRating(home.Defence)
+	awayDef := normalizeRating(away.Defence)
+	ratioHome := homeStr / awayDef
+	ratioAway := awayStr / homeDef
 	lambdaHome := ratioHome * ratioHome * 1.4
 	lambdaAway := ratioAway * ratioAway * 1.15
 	return poissonGoals(lambdaHome), poissonGoals(lambdaAway)
