@@ -41,8 +41,8 @@ func poissonGoals(lambda float64) int {
 // simulateMatch generates a scoreline using attack vs defence matchup.
 // Home team gets a small advantage via higher lambda multiplier.
 func simulateMatch(home, away models.Team) (homeGoals, awayGoals int) {
-	lambdaHome := (float64(home.Attack) / float64(home.Attack+away.Defence)) * 2.6
-	lambdaAway := (float64(away.Attack) / float64(away.Attack+home.Defence)) * 2.2
+	lambdaHome := (float64(home.Attack) / float64(away.Defence)) * 1.4
+	lambdaAway := (float64(away.Attack) / float64(home.Defence)) * 1.15
 	return poissonGoals(lambdaHome), poissonGoals(lambdaAway)
 }
 
@@ -235,7 +235,7 @@ func (s *leagueService) GetPredictions() ([]models.Prediction, error) {
 
 		homeWinProb := (float64(home.Attack+home.Midfield) / total) * 0.55
 		awayWinProb := (float64(away.Attack+away.Midfield) / total) * 0.45
-		drawProb := math.Max(0, 1.0-homeWinProb-awayWinProb)
+		drawProb := math.Max(0, 1.0-homeWinProb-awayWinProb)//cannot be negative
 
 		scores[home.ID] += homeWinProb*3 + drawProb
 		scores[away.ID] += awayWinProb*3 + drawProb
