@@ -41,8 +41,10 @@ func poissonGoals(lambda float64) int {
 // simulateMatch generates a scoreline using attack vs defence matchup.
 // Home team gets a small advantage via higher lambda multiplier.
 func simulateMatch(home, away models.Team) (homeGoals, awayGoals int) {
-	ratioHome := float64(home.Attack) / float64(away.Defence)
-	ratioAway := float64(away.Attack) / float64(home.Defence)
+	homeStr := float64(home.Attack)*0.7 + float64(home.Midfield)*0.3
+	awayStr := float64(away.Attack)*0.7 + float64(away.Midfield)*0.3
+	ratioHome := homeStr / float64(away.Defence)
+	ratioAway := awayStr / float64(home.Defence)
 	lambdaHome := ratioHome * ratioHome * 1.4
 	lambdaAway := ratioAway * ratioAway * 1.15
 	return poissonGoals(lambdaHome), poissonGoals(lambdaAway)
