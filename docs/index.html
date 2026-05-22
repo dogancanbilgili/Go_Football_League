@@ -324,7 +324,7 @@
     const res = await fetch(`${API}/league/table`);
     const data = await res.json();
     const played = data[0]?.played ?? 0;
-    currentWeek = Math.max(1, played > 0 ? Math.ceil(played / (20 / 10)) : 1);
+    currentWeek = played > 0 ? played : 1;
     document.getElementById('week-badge').textContent =
       played === 0 ? 'Not started' : `Week ${currentWeek} completed`;
   }
