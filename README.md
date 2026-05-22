@@ -98,6 +98,12 @@ The API is deployed and publicly accessible at:
 https://gofootballleague-production.up.railway.app
 ```
 
+The frontend is live at:
+
+```
+https://dogancanbilgili.github.io/Go_Football_League/
+```
+
 ---
 
 ## API Reference
