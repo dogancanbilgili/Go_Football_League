@@ -90,6 +90,14 @@ go run ./cmd
 
 The server starts on `http://localhost:8080`. On first run, the seeder automatically generates all 380 fixtures using the circle-method round-robin algorithm and inserts them in a single transaction.
 
+### Live deployment
+
+The API is deployed and publicly accessible at:
+
+```
+https://gofootballleague-production.up.railway.app
+```
+
 ---
 
 ## API Reference
